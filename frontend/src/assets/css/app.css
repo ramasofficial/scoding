@@ -1,0 +1,26 @@
+.container {
+  margin-top: 10px;
+  max-width: 1000px !important;
+}
+
+.login_form {
+  max-width: 600px !important;
+}
+
+.error_register {
+  padding: 5px 10px !important;
+  margin: 8px 0px;
+  font-size: 13px;
+}
+
+.cs_users_padding {
+  padding-right: 0px !important;
+}
+
+.select2-container .select2-selection--single {
+  height: 31px !important;
+}
+
+.select2-invalid .select2-container--default .select2-selection--single {
+  border: 1px solid #dc3545 !important;
+}
