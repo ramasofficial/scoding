@@ -1,0 +1,8 @@
+create todo task - for admin
+change todo task status - for users
+
+For admin:
+users list
+users create
+users edit
+users delete
