@@ -63,6 +63,7 @@ const App = () => {
   };
 
   useEffect(() => {
+    console.log("TODO: render two times...");
     if (loggedIn === true && accessToken !== false) {
       get_user_info({ accessToken: accessToken });
       const interval = setInterval(() => {
