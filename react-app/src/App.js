@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,6 +9,7 @@ import {
 import Home from "./Home/Home";
 import Login from "./Login/Login";
 import Register from "./Register/Register";
+import Users from "./Users/Users";
 import { apiClientOn } from "./services/api";
 
 const App = () => {
@@ -21,6 +22,8 @@ const App = () => {
       ? sessionStorage.getItem("accessToken")
       : false
   );
+
+  const [user, setUser] = React.useState(false);
 
   const login = (props) => {
     setLoggedIn(true);
@@ -44,14 +47,58 @@ const App = () => {
       });
   };
 
+  const get_user_info = async (props) => {
+    await apiClientOn({ accessToken: props.accessToken })
+      .get("api/get_user")
+      .then((response) => {
+        if (response.status === 200 && user === false) {
+          setUser(response.data);
+        }
+      })
+      .catch(() => {
+        // Do something
+      });
+  };
+
+  useEffect(() => {
+    if (loggedIn === true && accessToken !== false) {
+      get_user_info({ accessToken: accessToken });
+      const interval = setInterval(() => {
+        get_user_info({ accessToken: accessToken });
+      }, 60000);
+      return () => clearInterval(interval);
+    }
+  }, [loggedIn, accessToken]); // Waiting to get this states
+
   const authLink = (props) => {
     if (props.loggedIn) {
       return (
-        <li className="nav-item">
-          <a className="nav-link nav_pointer" onClick={logout}>
-            Logout
-          </a>
-        </li>
+        <React.Fragment>
+          <li className="nav-item">
+            <NavLink
+              className="nav-link"
+              activeClassName="active"
+              to="/"
+              exact={true}
+            >
+              Home
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink
+              className="nav-link"
+              activeClassName="active"
+              to="/users"
+            >
+              Users
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <a className="nav-link nav_pointer" onClick={logout}>
+              Logout
+            </a>
+          </li>
+        </React.Fragment>
       );
     } else {
       return (
@@ -100,16 +147,6 @@ const App = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarText">
           <ul className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <NavLink
-                className="nav-link"
-                activeClassName="active"
-                to="/"
-                exact={true}
-              >
-                Home
-              </NavLink>
-            </li>
             {authLink({ loggedIn: loggedIn })}
           </ul>
         </div>
@@ -119,7 +156,16 @@ const App = () => {
         <Route
           exact
           path="/"
-          render={(props) => <Home {...props} loggedIn={loggedIn} />}
+          render={(props) => (
+            <Home {...props} loggedIn={loggedIn} user={user} />
+          )}
+        />
+        <Route
+          exact
+          path="/users"
+          render={(props) => (
+            <Users {...props} loggedIn={loggedIn} user={user} accessToken={accessToken} />
+          )}
         />
         <Route
           exact
