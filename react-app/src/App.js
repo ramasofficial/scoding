@@ -14,12 +14,12 @@ import { apiClientOn } from "./services/api";
 
 const App = () => {
   const [loggedIn, setLoggedIn] = React.useState(
-    sessionStorage.getItem("loggedIn") === "true" || false
+    localStorage.getItem("loggedIn") === "true" || false
   );
 
   const [accessToken, setAccessToken] = React.useState(
-    sessionStorage.getItem("accessToken") !== ""
-      ? sessionStorage.getItem("accessToken")
+    localStorage.getItem("accessToken") !== ""
+      ? localStorage.getItem("accessToken")
       : false
   );
 
@@ -27,10 +27,10 @@ const App = () => {
 
   const login = (props) => {
     setLoggedIn(true);
-    sessionStorage.setItem("loggedIn", true);
+    localStorage.setItem("loggedIn", true);
 
     setAccessToken(props.access_token);
-    sessionStorage.setItem("accessToken", props.access_token);
+    localStorage.setItem("accessToken", props.access_token);
   };
 
   const logout = () => {
@@ -39,10 +39,10 @@ const App = () => {
       .then((response) => {
         if (response.status === 200) {
           setLoggedIn(false);
-          sessionStorage.setItem("loggedIn", false);
+          localStorage.setItem("loggedIn", false);
 
           setAccessToken(false);
-          sessionStorage.setItem("accessToken", false);
+          localStorage.setItem("accessToken", false);
         }
       });
   };
@@ -56,7 +56,9 @@ const App = () => {
         }
       })
       .catch(() => {
-        // Do something
+        // Need to do it, it is important
+        //setLoggedIn(false);
+        //setAccessToken(false);
       });
   };
 
