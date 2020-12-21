@@ -18,7 +18,7 @@ const App = () => {
   );
 
   const [accessToken, setAccessToken] = React.useState(
-    localStorage.getItem("accessToken") !== ""
+    localStorage.getItem("accessToken")
       ? localStorage.getItem("accessToken")
       : false
   );
@@ -38,11 +38,7 @@ const App = () => {
       .post("api/logout")
       .then((response) => {
         if (response.status === 200) {
-          setLoggedIn(false);
-          localStorage.setItem("loggedIn", false);
-
-          setAccessToken(false);
-          localStorage.setItem("accessToken", false);
+          logout_user();
         }
       });
   };
@@ -51,19 +47,28 @@ const App = () => {
     await apiClientOn({ accessToken: props.accessToken })
       .get("api/get_user")
       .then((response) => {
-        if (response.status === 200 && user === false) {
+        if (response.status === 200) {
           setUser(response.data);
+        } else {
+          logout_user();
         }
       })
       .catch(() => {
-        // Need to do it, it is important
-        //setLoggedIn(false);
-        //setAccessToken(false);
+        logout_user();
       });
   };
 
+  const logout_user = () => {
+    setLoggedIn(false);
+    localStorage.setItem("loggedIn", false);
+
+    setAccessToken(false);
+    localStorage.removeItem("accessToken");
+
+    setUser(false);
+  };
+
   useEffect(() => {
-    console.log("TODO: render two times...");
     if (loggedIn === true && accessToken !== false) {
       get_user_info({ accessToken: accessToken });
       const interval = setInterval(() => {
@@ -74,7 +79,7 @@ const App = () => {
   }, [loggedIn, accessToken]); // Waiting to get this states
 
   const authLink = (props) => {
-    if (props.loggedIn) {
+    if (props.user) {
       return (
         <React.Fragment>
           <li className="nav-item">
@@ -88,11 +93,7 @@ const App = () => {
             </NavLink>
           </li>
           <li className="nav-item">
-            <NavLink
-              className="nav-link"
-              activeClassName="active"
-              to="/users"
-            >
+            <NavLink className="nav-link" activeClassName="active" to="/users">
               Users
             </NavLink>
           </li>
@@ -149,9 +150,7 @@ const App = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarText">
-          <ul className="navbar-nav mr-auto">
-            {authLink({ loggedIn: loggedIn })}
-          </ul>
+          <ul className="navbar-nav mr-auto">{authLink({ user: user })}</ul>
         </div>
       </nav>
 
@@ -167,7 +166,12 @@ const App = () => {
           exact
           path="/users"
           render={(props) => (
-            <Users {...props} loggedIn={loggedIn} user={user} accessToken={accessToken} />
+            <Users
+              {...props}
+              loggedIn={loggedIn}
+              user={user}
+              accessToken={accessToken}
+            />
           )}
         />
         <Route
