@@ -3,7 +3,6 @@ import MUIDataTable from "mui-datatables";
 import { apiClientOn } from "../services/api";
 
 const Users = (props) => {
-
   const [usersData, setUsersData] = React.useState([]);
   const accessToken = props.accessToken;
   const loggedIn = props.loggedIn;
@@ -14,21 +13,21 @@ const Users = (props) => {
     direction: "asc",
   });
   const [tableOptions, setTableOptions] = React.useState({
-    count: 0
+    count: 0,
   });
 
   const columns = [
     {
       name: "name",
-      label: "Name"
+      label: "Name",
     },
     {
       name: "email",
-      label: "Email"
+      label: "Email",
     },
     {
       name: "created_at",
-      label: "Created at"
+      label: "Created at",
     },
   ];
 
@@ -48,10 +47,14 @@ const Users = (props) => {
           setCustomOptions({ ...customOptions, size: tableState.rowsPerPage });
           break;
         case "sort":
-          setCustomOptions({ ...customOptions, name: tableState.sortOrder.name, direction: tableState.sortOrder.direction });
+          setCustomOptions({
+            ...customOptions,
+            name: tableState.sortOrder.name,
+            direction: tableState.sortOrder.direction,
+          });
           break;
         default:
-          //console.log("Action not handled.");
+        //console.log("Action not handled.");
       }
     },
     count: tableOptions.count,
@@ -66,7 +69,16 @@ const Users = (props) => {
 
   const users_api_call = async () => {
     await apiClientOn({ accessToken: accessToken })
-      .get("api/users?size=" + customOptions.size + "&page=" + customOptions.page + "&name=" + customOptions.name + "&direction=" + customOptions.direction)
+      .get(
+        "api/users?size=" +
+          customOptions.size +
+          "&page=" +
+          customOptions.page +
+          "&name=" +
+          customOptions.name +
+          "&direction=" +
+          customOptions.direction
+      )
       .then((response) => {
         if (response.status === 200) {
           let responseJSON = response.data;
@@ -86,11 +98,7 @@ const Users = (props) => {
           <strong>Users</strong>
         </div>
         <div className="card-body text-center">
-          <MUIDataTable
-            data={usersData}
-            columns={columns}
-            options={options}
-          />
+          <MUIDataTable data={usersData} columns={columns} options={options} />
         </div>
       </div>
     </div>
