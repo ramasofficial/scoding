@@ -20,8 +20,10 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $size = (int) $request->size;
+        $name = $request->name;
+        $direction = $request->direction;
 
-        $users = User::limit($size)->orderBy('id', 'desc')->get();
+        $users = User::limit($size)->orderBy($name, $direction)->paginate($size);
         return response()->json($users, 200);
     }
 
