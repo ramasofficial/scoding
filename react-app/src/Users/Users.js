@@ -11,6 +11,7 @@ const Users = (props) => {
     page: 1,
     name: "id",
     direction: "asc",
+    search: ""
   });
   const [tableOptions, setTableOptions] = React.useState({
     count: 0,
@@ -53,6 +54,12 @@ const Users = (props) => {
             direction: tableState.sortOrder.direction,
           });
           break;
+        case "search":
+          setCustomOptions({
+            ...customOptions,
+            search: tableState.searchText,
+          });
+          break;
         default:
         //console.log("Action not handled.");
       }
@@ -77,7 +84,9 @@ const Users = (props) => {
           "&name=" +
           customOptions.name +
           "&direction=" +
-          customOptions.direction
+          customOptions.direction +
+          "&search=" +
+          customOptions.search
       )
       .then((response) => {
         if (response.status === 200) {

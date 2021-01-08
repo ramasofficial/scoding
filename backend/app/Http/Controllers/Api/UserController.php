@@ -22,8 +22,9 @@ class UserController extends Controller
         $size = (int) $request->size;
         $name = $request->name;
         $direction = $request->direction;
+        $search = $request->search;
 
-        $users = User::limit($size)->orderBy($name, $direction)->paginate($size);
+        $users = User::limit($size)->search($search)->orderBy($name, $direction)->paginate($size);
         return response()->json($users, 200);
     }
 
